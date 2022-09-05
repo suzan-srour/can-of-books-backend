@@ -14,7 +14,6 @@ server.get('/test', (request, response) => {
 
 }) 
 
-
 mongoose.connect('mongodb://localhost:27017/books-database', {useNewUrlParser: true, useUnifiedTopology: true}); 
 
 const BookSchema = new mongoose.Schema({  // define schema
