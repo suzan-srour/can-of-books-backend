@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const server = express();
 server.use(cors());
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 server.get('/test', (request, response) => {
 
@@ -61,17 +61,17 @@ server.get('/books',getBooksHandler);
 server.get('*',defualtHandler);
 
 
-// http://localhost:3010/
+// http://localhost:3000/
 function homeHandler(req,res) {
   res.send("Hi from the home route");
 }
 
-// http://localhost:3010/test
+// http://localhost:3000/test
 function testHandler(req,res) {
   res.status(200).send("You are requesting the test route");
 }
 
-// http://localhost:3010/*
+// http://localhost:3000/*
 function defualtHandler(req,res) {
   res.status(404).send("Sorry, Page not found");
 }
