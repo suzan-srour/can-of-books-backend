@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const server = express();
 server.use(cors());
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 server.get('/test', (request, response) => {
 
@@ -30,19 +30,19 @@ async function seedData(){
   const firstBook = new BookModel({
     title:"the forty Rules of Love" ,
     description:"Two parallel tales, one in contemporary times and the other in the thirteenth century, when Rumi encounters his spiritual guide, the traveling dervish known as “Shams of Tabrizi” and how they together embody the eternal message of love poetry ",
-    status:" a novel"
+    status:" pending"
   })
 
   const secondBook= new BookModel({
     title: "the alchemist ",
     description:" the story of the young Spanish shepherd Santiago on his journey to achieve his dream, which has been repeated more than once, which revolves around a treasure buried in the pyramids in Egypt. ",
-    status:" a novel"
+    status:"pending"
   })
 
   const thirdBook = new BookModel({
     title: " The Da Vinci Code" ,
     description:"A fictional police mystery and suspense novel by American author Dan Brown published in 2003. The novel has sold 60.5 million copies and is ranked at the top of the New York Times bestseller list " ,
-    status:" a novel"
+    status:" pending"
   })
 
   await firstBook.save();
@@ -50,7 +50,7 @@ async function seedData(){
   await thirdBook.save();
 }
 
- seedData(); //call seedData function
+  seedData(); //call seedData function
 
 
 //Routes
@@ -60,24 +60,25 @@ server.get('/books',getBooksHandler);
 server.get('*',defualtHandler);
 
 
-// http://localhost:3010/
+// http://localhost:3000/
 function homeHandler(req,res) {
   res.send("Hi from the home route");
 }
 
-// http://localhost:3010/test
+// http://localhost:3000/test
 function testHandler(req,res) {
   res.status(200).send("You are requesting the test route");
 }
 
-// http://localhost:3010/*
+// http://localhost:3000/*
 function defualtHandler(req,res) {
   res.status(404).send("Sorry, Page not found");
 }
 
+//http://localhost:3000/books
 
 function getBooksHandler(req,res) {
-  Model.find({},(err,result)=>{
+  BookModel.find({},(err,result)=>{
       if(err)
       {
           console.log(err);
