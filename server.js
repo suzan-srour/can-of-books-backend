@@ -2,11 +2,12 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { response } = require('express');
-
 const mongoose = require('mongoose');
 const server = express();
 server.use(cors());
+server.use(express.json())
+const { response } = require('express');
+
 
 const PORT = process.env.PORT || 3001;
 
@@ -18,16 +19,15 @@ server.get('/test', (request, response) => {
 
 mongoose.connect('mongodb://localhost:27017/books-database', {useNewUrlParser: true, useUnifiedTopology: true}); 
 
-const BookSchema = new mongoose.Schema({  // define schema
+const BookSchema = new mongoose.Schema({ 
 title: String,
 description:String,
 status:String
 });
 
 
-const BookModel = mongoose.model('Book', BookSchema); //compile the schem into a model
+const BookModel = mongoose.model('Book', BookSchema); 
 
-//seed data (insert initial data)
 async function seedData(){
   const firstBook = new BookModel({
     title:"the forty Rules of Love" ,
@@ -60,8 +60,8 @@ server.get('/',homeHandler);
 server.get('/test',testHandler);
 server.get('/books',getBooksHandler); 
 server.post('/addbook',addBookHandler);
-server.delete('/deleteBook/:id',deleteBookHandler);
-
+server.delete('/deletebook/:id',deleteBookHandler);
+server.put('/updateBook/:id',updateBookHandler);
 server.get('*',defualtHandler);
 
 
@@ -97,7 +97,7 @@ function getBooksHandler(req,res) {
 }
 
 
-
+//http://localhost:3001/addbook
 async function addBookHandler(req,res) {
   console.log(req.body);
   const { title,description,status } = req.body;
@@ -122,7 +122,7 @@ async function addBookHandler(req,res) {
   })
 }
 
-
+//http://localhost:3001/deletebook
 function deleteBookHandler(req,res) {
   const bookId = req.params.id;
   BookModel.deleteOne({_id:bookId},(err,result)=>{
@@ -142,10 +142,31 @@ function deleteBookHandler(req,res) {
   })
   
 }
+//http://localhost:3001/updateBook
+function updateBookHandler(req,res){
+  const id = req.params.id;
+  const {title,description,status} = req.body; //Destructuring assignment
 
+  BookModel.findByIdAndUpdate(id,{title,description,status},(err,result)=>{
+      if(err) {
+          console.log(err);
+      }
+      else {
+          BookModel.find({},(err,result)=>{
+              if(err)
+              {
+                  console.log(err);
+              }
+              else
+              {
+              
+                  res.send(result);
+              }
+          })
+      }
+  })
 
-
-
+}
 
 
 
