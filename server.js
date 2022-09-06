@@ -2,11 +2,13 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const { response } = require('express');
+
 const mongoose = require('mongoose');
 const server = express();
 server.use(cors());
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 server.get('/test', (request, response) => {
 
@@ -50,13 +52,16 @@ async function seedData(){
   await thirdBook.save();
 }
 
-  seedData(); //call seedData function
+  seedData(); 
 
 
 //Routes
 server.get('/',homeHandler);
 server.get('/test',testHandler);
-server.get('/books',getBooksHandler);
+server.get('/books',getBooksHandler); 
+server.post('/addbook',addBookHandler);
+server.delete('/deleteBook/:id',deleteBookHandler);
+
 server.get('*',defualtHandler);
 
 
@@ -75,7 +80,7 @@ function defualtHandler(req,res) {
   res.status(404).send("Sorry, Page not found");
 }
 
-//http://localhost:3000/books
+//http://localhost:3001/books
 
 function getBooksHandler(req,res) {
   BookModel.find({},(err,result)=>{
@@ -90,6 +95,57 @@ function getBooksHandler(req,res) {
       }
   })
 }
+
+
+
+async function addBookHandler(req,res) {
+  console.log(req.body);
+  const { title,description,status } = req.body;
+  await BookModel.create({
+      title:title ,
+      description :description,
+      status:status
+      
+  });
+ 
+
+  BookModel.find({},(err,result)=>{
+      if(err)
+      {
+          console.log(err);
+      }
+      else
+      {
+          // console.log(result);
+          res.send(result);
+      }
+  })
+}
+
+
+function deleteBookHandler(req,res) {
+  const bookId = req.params.id;
+  BookModel.deleteOne({_id:bookId},(err,result)=>{
+      
+      BookModel.find({},(err,result)=>{
+          if(err)
+          {
+              console.log(err);
+          }
+          else
+          {
+              // console.log(result);
+              res.send(result);
+          }
+      })
+
+  })
+  
+}
+
+
+
+
 
 
 
