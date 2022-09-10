@@ -16,8 +16,8 @@ server.get('/test', (request, response) => {
   response.send('test request received')
 
 }) 
-
-mongoose.connect('mongodb://suzan:<suzan0795665279>@ac-l5scu0a-shard-00-00.tmyqfzc.mongodb.net:27017,ac-l5scu0a-shard-00-01.tmyqfzc.mongodb.net:27017,ac-l5scu0a-shard-00-02.tmyqfzc.mongodb.net:27017/?ssl=true&replicaSet=atlas-209b2y-shard-0&authSource=admin&retryWrites=true&w=majority ', {useNewUrlParser: true, useUnifiedTopology: true}); 
+const linkdb =process.env.DBlink;
+mongoose.connect('${linkdb}', {useNewUrlParser: true, useUnifiedTopology: true}); 
 
 const BookSchema = new mongoose.Schema({ 
 title: String,
@@ -58,10 +58,11 @@ async function seedData(){
 //Routes
 server.get('/',homeHandler);
 server.get('/test',testHandler);
+
 server.get('/books',getBooksHandler); 
-server.post('/addbook',addBookHandler);
-server.delete('/deletebook/:id',deleteBookHandler);
-server.put('/updateBook/:id',updateBookHandler);
+server.post('/books',addBookHandler);
+server.delete('/books/:id',deleteBookHandler);
+server.put('/books/:id',updateBookHandler);
 server.get('*',defualtHandler);
 
 
@@ -97,7 +98,7 @@ function getBooksHandler(req,res) {
 }
 
 
-//http://localhost:3001/addbook
+//http://localhost:3001/books
 async function addBookHandler(req,res) {
   console.log(req.body);
   const { title,description,status } = req.body;
@@ -122,19 +123,19 @@ async function addBookHandler(req,res) {
   })
 }
 
-//http://localhost:3001/deletebook
+//http://localhost:3001/books/:id
 function deleteBookHandler(req,res) {
   const bookId = req.params.id;
   BookModel.deleteOne({_id:bookId},(err,result)=>{
       
-      BookModel.find({},(err,result)=>{
+      BookModel.find({ },(err,result)=>{
           if(err)
           {
               console.log(err);
           }
           else
           {
-              // console.log(result);
+            
               res.send(result);
           }
       })
@@ -142,7 +143,7 @@ function deleteBookHandler(req,res) {
   })
   
 }
-//http://localhost:3001/updateBook
+//http://localhost:3001/books/:id
 function updateBookHandler(req,res){
   const id = req.params.id;
   const {title,description,status} = req.body; //Destructuring assignment
